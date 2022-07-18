@@ -20,7 +20,7 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture(scope='function')
-def driver(request):
+def browser(request):
     browser_name = request.config.getoption('browser_name')
     user_languages = request.config.getoption('language')
 
@@ -29,17 +29,17 @@ def driver(request):
         options.add_experimental_option('prefs', {'intl.accept_languages': user_languages})
         print("\nstart browser for test..")
         chrome_service = Service(executable_path='/home/user/chromedriver')
-        driver = webdriver.Chrome(options=options, service=chrome_service)
-        driver.implicitly_wait(5)
+        browser = webdriver.Chrome(options=options, service=chrome_service)
+        browser.implicitly_wait(5)
     elif browser_name == "firefox":
         fp = webdriver.FirefoxProfile()
         fp.set_preference("intl.accept_languages", user_languages)
         print("\nstart firefox browser for test..")
-        driver = webdriver.Firefox(firefox_profile=fp)
-        driver.implicitly_wait(5)
+        browser = webdriver.Firefox(firefox_profile=fp)
+        browser.implicitly_wait(5)
     else:
         raise pytest.UsageError('--browser_name should be chrome or firefox')
 
-    yield driver
+    yield browser
     print("\nquit browser..")
-    driver.quit()
+    browser.quit()
